@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Question-Answer Form</title>
+</head>
+
+<body>
+    <h1>Question-Answer Form</h1>
+    <div id="question-display"></div>
+    <input type="text" id="answer" placeholder="Enter your answer">
+    <button id="send">Send</button>
+
+    <script>
+        const socket = new WebSocket('ws://localhost:8000');
+
+<!--        send a message if connected-->
+        socket.addEventListener('open', (event) => {
+            iAmReady();
+        });
+
+<!--        display the text if get it from the server-->
+        socket.addEventListener('message', (event) => {
+            const question = event.data;
+            displayQuestion(question);
+        });
+
+        function sendAnswer() {
+            const answer = document.getElementById('answer').value;
+            socket.send(answer);
+            clearAnswerField();
+        }
+
+<!--        send the answer if clicked on Send button-->
+        document.getElementById('send').addEventListener('click', () => {
+            sendAnswer();
+        });
+
+
+        function displayQuestion(question) {
+            const questionDisplay = document.getElementById('question-display');
+            questionDisplay.innerHTML = `<p>${question}</p>`;
+        }
+
+        function clearAnswerField() {
+            document.getElementById('answer').value = '';
+        }
+
+        function iAmReady() {
+            console.log('I have connection');
+            socket.send('I am ready');
+        }
+
+<!--        send the answer if pressed Enter-->
+        document.getElementById('answer').addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                sendAnswer();
+            }
+        });
+    </script>
+</body>
+
+</html>

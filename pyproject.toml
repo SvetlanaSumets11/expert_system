@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "medical-expert-system-knowledge-base"
+version = "0.1.0"
+description = ""
+authors = ["sumets <svitlana.sumets@nixsolutions.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.7.17"
+pyknow = {git = "https://github.com/buguroo/pyknow.git"}
+websocket-server = "^0.6.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

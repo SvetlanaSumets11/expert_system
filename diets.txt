@@ -1,0 +1,5 @@
+vegan_diet
+usual_diet
+gluten_free_diet
+diabetic_diet
+diet_for_weight_loss

@@ -2,11 +2,51 @@
 <html>
 
 <head>
-    <title>Question-Answer Form</title>
+    <title>Expert system</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            margin: 10px 0;
+            width: 60%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #send {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        #send:hover {
+            background-color: #45a049;
+        }
+
+        #question-display {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 
+
 <body>
-    <h1>Question-Answer Form</h1>
+    <h1>Expert system</h1>
     <div id="question-display"></div>
     <input type="text" id="answer" placeholder="Enter your answer">
     <button id="send">Send</button>
@@ -14,12 +54,10 @@
     <script>
         const socket = new WebSocket('ws://localhost:8000');
 
-<!--        send a message if connected-->
         socket.addEventListener('open', (event) => {
             iAmReady();
         });
 
-<!--        display the text if get it from the server-->
         socket.addEventListener('message', (event) => {
             const question = event.data;
             displayQuestion(question);
@@ -31,11 +69,9 @@
             clearAnswerField();
         }
 
-<!--        send the answer if clicked on Send button-->
         document.getElementById('send').addEventListener('click', () => {
             sendAnswer();
         });
-
 
         function displayQuestion(question) {
             const questionDisplay = document.getElementById('question-display');
@@ -51,7 +87,6 @@
             socket.send('I am ready');
         }
 
-<!--        send the answer if pressed Enter-->
         document.getElementById('answer').addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
                 sendAnswer();

@@ -46,10 +46,10 @@ def send_to_websocket(text):
     # else send it as a question with number
     if text.startswith('Result: '):
         result = text.lstrip('Result: ')
-        server.send_message(CLIENT, result + '<br><br> <b>TO CONTINUE, RELOAD THIS PAGE<b>')
+        server.send_message(CLIENT, result + '<br><br> <b>ЩОБ ПРОДОВЖИТИ, ПЕРЕЗАВАНТАЖТЕ СТОРІНКУ<b>')
     elif text.startswith('Initial: '):
         result = text.lstrip('Initial: ')
-        server.send_message(CLIENT, result + '<br><br> <b>TO CONTINUE, SEND SOMETHING <b>')
+        server.send_message(CLIENT, result + '<br><br> <b>Щоб продовжити, напишіть що-небудь<b>')
     else:
         QUESTION_NUMBER += 1
         server.send_message(CLIENT, str(QUESTION_NUMBER) + ') ' + text)
@@ -58,9 +58,6 @@ def send_to_websocket(text):
     with MESSAGE_RECEIVED_CONDITION:
         MESSAGE_RECEIVED_CONDITION.wait()
 
-
-
-    # return answer to rule question
     print()
     print(f'QUESTION = {text}')
     print(f'MESSAGE_RECEIVED_TEXT = {MESSAGE_RECEIVED_TEXT}')
@@ -74,8 +71,10 @@ class Greetings(KnowledgeEngine):
     @DefFacts()
     def _initial_action(self):
         send_to_websocket(
-            "Initial: Hi! I am Dr.Yar, I am here to help you make your health better. For that you'll have to answer a few "
-            "questions about your conditions Do you feel any of the following symptoms:")
+            "Привіт! Я можу допомогти вам покращити ваше здоров'я. "
+            "Для цього вам доведеться відповісти на кілька запитань про ваш стан.\n"
+            "Введіть що-небудь, щоб продовжити"
+        )
         yield Fact(action='find_diet')
 
     @Rule(Fact(action='find_diet'), NOT(Fact(slimming=W())), salience=1)
@@ -143,8 +142,6 @@ class Greetings(KnowledgeEngine):
         self.declare(
             Fact(organic_products=send_to_websocket('Чи ви приділяєте увагу вживанню органічних продуктів?: ')))
 
-    # slimming, vegetarianism, gluten, diabetes, activity, all_products, dietary_restrictions, activity_evaluation,
-    # allergy, unhealthy_food, muscle_mass, better_health, medical_restrictions, calories, organic_products
     @Rule(
         Fact(action='find_diet'), Fact(slimming=YES), Fact(vegetarianism=YES), Fact(gluten=YES),
         Fact(diabetes=NO), Fact(activity=YES), Fact(all_products=NO), Fact(dietary_restrictions=YES),
@@ -193,14 +190,12 @@ class Greetings(KnowledgeEngine):
     @Rule(Fact(action='find_diet'), Fact(diet=MATCH.diet), salience=-998)
     def diet(self, diet):
         diet_details = self.D_DESC_MAP[diet]
-        send_to_websocket('Result: The most probable diet that you have is %s\n' % (
-            diet) + 'A short description of the diet is given below :\n' + diet_details + '\n')
-        # print('The most probable diet that you have is %s\n' % (diet))
-        # print('A short description of the diet is given below :\n')
-        # print(diet_details + '\n')
+        send_to_websocket(
+            'Результат: Дієта, яка вам підходить: %s\n' % (diet)
+            + 'Короткий опис дієти наведено нижче:\n'
+            + diet_details + '\n'
+        )
 
-    # slimming, vegetarianism, gluten, diabetes, activity, all_products, dietary_restrictions, activity_evaluation,
-    # allergy, unhealthy_food, muscle_mass, better_health, medical_restrictions, calories, organic_products
     @Rule(
         Fact(action='find_diet'),
         Fact(slimming=MATCH.slimming),
@@ -241,12 +236,11 @@ class Greetings(KnowledgeEngine):
                 max_diet = val
 
         diet_details = self.D_DESC_MAP[max_diet]
-        send_to_websocket('Result: The most probable diet that you have is %s <br>' % (
-            max_diet) + 'A short description of the diet is given below :<br>' + diet_details + '<br>')
-        # print('')
-        # print('The most probable diet that you have is %s\n' % (max_diet))
-        # print('A short description of the diet is given below :\n')
-        # print(diet_details + '\n')
+        send_to_websocket(
+            'Результат: Дієта, яка вам підходить: %s <br>' % (max_diet)
+            + 'Короткий опис дієти наведено нижче: <br>'
+            + diet_details + '<br>'
+        )
 
 
 def run_expert_system():
